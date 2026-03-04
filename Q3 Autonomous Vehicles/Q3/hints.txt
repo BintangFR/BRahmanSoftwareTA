@@ -1,0 +1,6 @@
+Buzzwords to look into:
+spline
+delaunay triangulation
+voronoi diagram
+
+Would distinguishing inner and outer cones help?
