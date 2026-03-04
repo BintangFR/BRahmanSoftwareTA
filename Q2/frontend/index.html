@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VA Telemetry Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0; }
+    header { background: #1e293b; padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem; }
+    header h1 { font-size: 1.25rem; font-weight: 600; }
+    #status-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background: #334155; }
+    #status-badge.ok { background: #166534; color: #bbf7d0; }
+    #status-badge.error { background: #7f1d1d; color: #fecaca; }
+    main { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; padding: 1.5rem 2rem; }
+    section { background: #1e293b; border-radius: 0.75rem; padding: 1.25rem; }
+    h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #334155; }
+    th { color: #64748b; font-weight: 500; }
+    .badge { padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; }
+    .badge.active { background: #166534; color: #bbf7d0; }
+    .badge.inactive { background: #374151; color: #9ca3af; }
+    #refresh-btn { margin-top: 1rem; padding: 0.4rem 1rem; background: #3b82f6; color: #fff; border: none; border-radius: 0.4rem; cursor: pointer; font-size: 0.875rem; }
+    #refresh-btn:hover { background: #2563eb; }
+    #last-updated { font-size: 0.75rem; color: #475569; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🚗 VA Telemetry Dashboard</h1>
+    <span id="status-badge">Checking…</span>
+  </header>
+
+  <main>
+    <!-- Sensor Metadata Component -->
+    <section id="sensors-section">
+      <h2>Sensor Metadata</h2>
+      <table id="sensors-table">
+        <thead><tr><th>ID</th><th>Name</th><th>Unit</th><th>Status</th></tr></thead>
+        <tbody><tr><td colspan="4">Loading…</td></tr></tbody>
+      </table>
+    </section>
+
+    <!-- Telemetry Component -->
+    <section id="telemetry-section">
+      <h2>Telemetry Records</h2>
+      <table id="telemetry-table">
+        <thead><tr><th>Timestamp</th><th>Speed (km/h)</th><th>Engine Temp (°C)</th><th>Battery (V)</th></tr></thead>
+        <tbody><tr><td colspan="4">Loading…</td></tr></tbody>
+      </table>
+      <button id="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+      <p id="last-updated"></p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
