@@ -1,0 +1,31 @@
+Q2 Implementation Assumptions
+
+1) Generator workload
+- The generator alternates between SimpleTask and ComplexTask.
+- SimpleTask inputs are deterministic positive floats.
+- ComplexTask inputs are deterministic vectors of 3 integers.
+
+2) Runtime pacing
+- A small sleep is used in each loop to avoid busy-spinning and excessive CPU use.
+- The exact generation frequency is not mandated, so a 20 ms interval is used.
+
+3) Graceful shutdown
+- The shutdown flag stops new generation.
+- Processor and transmitter continue draining their respective queues after shutdown until empty.
+- Non-blocking pop is used in processor/transmitter loops for graceful exit.
+
+4) Type and serialization rules
+- TaskType values are encoded as:
+  - 00 for SimpleTask
+  - 01 for ComplexTask
+- Byte 0 stores TaskType in bits 7..6, remaining bits are 0.
+- Bytes 1..4 are packed big-endian for both float (SimpleTask) and int32 (ComplexTask).
+- Bytes 5..7 store the lower 24 bits of a millisecond timestamp in big-endian order.
+
+5) Processed value API
+- ITask::getProcessedValue() returns float for both task types.
+- For ComplexTask serialization, that processed float is cast to int32 for packing.
+
+6) Testability
+- main() is excluded when UNIT_TEST is defined to allow including Question-2.cc from the test file.
+- A reusable packTask(...) helper is added to test deterministic bitpacking with fixed timestamps.
