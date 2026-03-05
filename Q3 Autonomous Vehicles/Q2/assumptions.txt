@@ -4,15 +4,22 @@ Q2 Implementation Assumptions
 - The generator alternates between SimpleTask and ComplexTask.
 - SimpleTask inputs are deterministic positive floats.
 - ComplexTask inputs are deterministic vectors of 3 integers.
+- Source: The assignment states simulation values are user-chosen ("You are free to choose the specific values for your simulation"), so deterministic task patterns are a valid testable choice.
 
 2) Runtime pacing
 - A small sleep is used in each loop to avoid busy-spinning and excessive CPU use.
 - The exact generation frequency is not mandated, so a 20 ms interval is used.
+- Source (sleep/yield behavior): C++ reference for `std::this_thread::sleep_for`.
+  https://en.cppreference.com/w/cpp/thread/sleep_for
+- Source (busy wait is CPU intensive): M. Herlihy and N. Shavit, *The Art of Multiprocessor Programming*, revised 1st ed., Morgan Kaufmann, 2012 (discussion of spinning vs blocking/waiting).
 
 3) Graceful shutdown
 - The shutdown flag stops new generation.
 - Processor and transmitter continue draining their respective queues after shutdown until empty.
 - Non-blocking pop is used in processor/transmitter loops for graceful exit.
+- Source (atomic stop flag pattern): C++ reference for `std::atomic` and lock-free synchronization primitives.
+  https://en.cppreference.com/w/cpp/atomic/atomic
+- Source (graceful thread lifecycle and shutdown coordination): A. Williams, *C++ Concurrency in Action*, 2nd ed., Manning, 2019.
 
 4) Type and serialization rules
 - TaskType values are encoded as:
@@ -21,11 +28,20 @@ Q2 Implementation Assumptions
 - Byte 0 stores TaskType in bits 7..6, remaining bits are 0.
 - Bytes 1..4 are packed big-endian for both float (SimpleTask) and int32 (ComplexTask).
 - Bytes 5..7 store the lower 24 bits of a millisecond timestamp in big-endian order.
+- Source (bit/byte ordering and network byte order convention): RFC 1700 (Assigned Numbers), section on Data Notations ("big-endian" network order).
+  https://datatracker.ietf.org/doc/html/rfc1700
+- Source (portable fixed-width integer semantics): C++ reference for `<cstdint>` fixed-width types (`int32_t`, `uint32_t`).
+  https://en.cppreference.com/w/cpp/types/integer
+- Source (float representation background): IEEE Std 754-2019, *IEEE Standard for Floating-Point Arithmetic*.
 
 5) Processed value API
 - ITask::getProcessedValue() returns float for both task types.
 - For ComplexTask serialization, that processed float is cast to int32 for packing.
+- Source: The bitpacking requirements specify Bytes 1..4 hold "a float or int, depending on task type"; using a shared getter plus explicit cast at serialization preserves polymorphic processing while meeting the per-type wire format.
 
 6) Testability
 - main() is excluded when UNIT_TEST is defined to allow including Question-2.cc from the test file.
 - A reusable packTask(...) helper is added to test deterministic bitpacking with fixed timestamps.
+- Source (unit test design guidance): GoogleTest Primer and advanced docs recommend isolating logic and testing deterministic units.
+  https://google.github.io/googletest/primer.html
+  https://google.github.io/googletest/advanced.html
