@@ -72,8 +72,6 @@ V5 became much better after simplifying and tightening the pipeline around Delau
 - Laplacian smoothing + Catmull-Rom interpolation is used to produce rounded waypoints.
 - Final spacing remains under `0.5 m` via `0.45 m` interpolation step target.
 
-![V5 improved waypoint result](image-2.png)
-
 ## Hurdles Encountered
 
 1. `Question-3.cc` started as an empty/stub file
